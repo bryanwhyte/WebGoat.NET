@@ -58,7 +58,7 @@ jobs:
         username: ${{ secrets.SONATYPE_IQ_USERNAME }}
         password: ${{ secrets.SONATYPE_IQ_PASSWORD }}
         application-id: gha-webgoat.net
-        scan-targets: target/*.war
+        scan-targets: **/*.nupkg
         stage : build
         sarif-file: 'result.sarif'
         upload-sarif-file: 'true'
