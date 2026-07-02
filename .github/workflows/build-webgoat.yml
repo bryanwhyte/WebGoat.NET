@@ -31,9 +31,8 @@ jobs:
     - name: Restore Solution
       run: nuget restore ${{ env.SOLUTION }}
 
-    # Add this right before the Custom NuGet Restore step to debug
-    - name: Find packages.config location
-      run: dir /s packages.config
+    - name: List Root Directory Files
+      run: dir
       shell: cmd
 
     - name: Custom NuGet Restore
