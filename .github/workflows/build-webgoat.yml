@@ -21,7 +21,7 @@ jobs:
     steps:
     # Step 1: Check out the repository code
     - name: Checkout Code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v4.2.2
 
     # Step 2: Setup MSBuild (required for legacy .NET Framework apps)
     - name: Setup MSBuild
