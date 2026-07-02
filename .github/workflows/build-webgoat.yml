@@ -28,16 +28,19 @@ jobs:
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v2
 
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
+
     - name: Restore Solution via Nexus Proxy Only
       run: |
-        # 1. Wipe out all default machine-level feeds (like nuget.org)
+        # 1. Clear any machine-level fallback caches or sources
         nuget sources Clear
         
-        # 2. Add your Nexus proxy as the exclusive source
+        # 2. Register your authenticated Nexus instance
         nuget sources Add -Name "NexusProxy" -Source "https://repo.bwhyte.ngrok.io/repository/nuget-proxy/index.json" -UserName "${{ secrets.SONATYPE_IQ_USERNAME }}" -Password "${{ secrets.SONATYPE_NXRM_PASSWORD }}"
         
-        # 3. Run the restore
-        nuget restore ${{ env.SOLUTION }}
+        # 3. CRITICAL: Explicitly pass the single allowed source to the restore engine
+        nuget restore ${{ env.SOLUTION }} -Source "NexusProxy"
 
     - name: List Root Directory Files
       run: dir
