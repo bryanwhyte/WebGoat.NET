@@ -1,51 +1,58 @@
-name: Manual WebGoat.NET Build
+name: Build and Test Pipeline
 
-# This configures the pipeline to be triggered manually from the Actions tab
 on:
+  push:
+    branches: [ main ]
   workflow_dispatch:
-    inputs:
-      build_configuration:
-        description: 'Build Configuration'
-        required: true
-        default: 'Release'
-        type: choice
-        options:
-          - Release
-          - Debug
+
+env:
+  SOLUTION: '**/*.sln'
+  BUILD_PLATFORM: 'Any CPU'
+  BUILD_CONFIGURATION: 'Release'
+  # Mapping Azure's $(build.artifactStagingDirectory) to a GitHub Actions workspace directory
+  ARTIFACT_STAGING_DIR: '${{ github.workspace }}\artifacts'
 
 jobs:
   build:
-    name: Build WebGoat.NET
+    name: Run Build and Test Steps
     runs-on: windows-latest
 
     steps:
-    # Step 1: Check out the repository code
     - name: Checkout Code
-      uses: actions/checkout@v4.2.2
+      uses: actions/checkout@v4
 
-    # Step 2: Setup MSBuild (required for legacy .NET Framework apps)
-    - name: Setup MSBuild
+    # Required for VSBuild/MSBuild and VSTest to be available in the command line
+    - name: Setup MSBuild and VS Test Tools
       uses: microsoft/setup-msbuild@v2
 
-    # Step 3: Setup NuGet to restore dependencies
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v2
 
-    # Step 4: Restore NuGet packages for the solution
-    - name: Restore NuGet Packages
-      run: nuget restore WebGoat.NET.sln
+    - name: Restore Solution
+      run: nuget restore ${{ env.SOLUTION }}
 
-    # Step 5: Build the solution using MSBuild
-    - name: Build Solution
-      run: |
-        msbuild WebGoat.NET.sln /p:Configuration=${{ github.event.inputs.build_configuration }} /p:Platform="Any CPU"
+    - name: Custom NuGet Restore
+      run: nuget restore WebGoat/packages.config -PackagesDirectory packages -Verbosity Detailed
 
-    # Step 6: (Optional) Upload the build artifacts so you can download them
-    - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v4
+    - name: List packages directory
+      run: dir packages
+      shell: cmd
+
+    - name: Set up Java 17
+      uses: actions/setup-java@v4
       with:
-        name: WebGoat-NET-Build-${{ github.event.inputs.build_configuration }}
-        path: |
-          **/bin/
-          **/obj/
-          
+        distribution: 'temurin'
+        java-version: '17'
+        architecture: x64
+
+    # Equivalent to: VSBuild@1
+    - name: Build Solution (VSBuild equivalent)
+      run: |
+        mkdir "${{ env.ARTIFACT_STAGING_DIR }}"
+        msbuild ${{ env.SOLUTION }} /p:Configuration="${{ env.BUILD_CONFIGURATION }}" /p:Platform="${{ env.BUILD_PLATFORM }}" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="${{ env.ARTIFACT_STAGING_DIR }}"
+
+    # Equivalent to: VSTest@2
+    - name: Run VS Tests (VSTest equivalent)
+      run: |
+        vstest.console.exe "**\bin\${{ env.BUILD_CONFIGURATION }}\*test*.dll" /Platform:${{ env.BUILD_PLATFORM }} /Configuration:${{ env.BUILD_CONFIGURATION }}
+    
