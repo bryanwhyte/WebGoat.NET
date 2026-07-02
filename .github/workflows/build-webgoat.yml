@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  SOLUTION: '**/*.sln'
+  SOLUTION: 'WebGoat.NET.sln'
   BUILD_PLATFORM: 'Any CPU'
   BUILD_CONFIGURATION: 'Release'
   # Mapping Azure's $(build.artifactStagingDirectory) to a GitHub Actions workspace directory
