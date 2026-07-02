@@ -30,7 +30,7 @@ jobs:
 
     - name: Restore Solution
       run: |
-        nuget sources Add -Name "NexusProxy" -Source "https://repo.bwhyte.ngrok.io/repository/nuget.org-proxy/index.json" -UserName "${{ secrets.SONATYPE_IQ_USERNAME }}" -Password "${{ secrets.SONATYPE_NXRM_PASSWORD }}"
+        nuget sources Add -Name "NexusProxy" -Source "https://repo.bwhyte.ngrok.io/repository/nuget-proxy/index.json" -UserName "${{ secrets.SONATYPE_IQ_USERNAME }}" -Password "${{ secrets.SONATYPE_NXRM_PASSWORD }}"
         nuget restore ${{ env.SOLUTION }}
 
     - name: List Root Directory Files
