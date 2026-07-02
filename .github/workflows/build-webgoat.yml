@@ -29,7 +29,9 @@ jobs:
       uses: NuGet/setup-nuget@v2
 
     - name: Restore Solution
-      run: nuget restore ${{ env.SOLUTION }}
+      run: |
+        nuget sources Add -Name "NexusProxy" -Source "https://repo.bwhyte.ngrok.io/repository/npm-proxy/index.json" -UserName "${{ secrets.SONATYPE_IQ_USERNAME }}" -Password "${{ secrets.SONATYPE_NXRM_PASSWORD }}"
+        nuget restore ${{ env.SOLUTION }}
 
     - name: List Root Directory Files
       run: dir
