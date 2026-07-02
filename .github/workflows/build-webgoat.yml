@@ -32,12 +32,14 @@ jobs:
       uses: NuGet/setup-nuget@v2
 
     - name: Restore Solution via Nexus Proxy Only
+      env:
+        NuGetAudit: 'false' # Forces the audit engine off via the system environment
       run: |
         nuget sources Clear
         nuget sources Add -Name "NexusProxy" -Source "https://repo.bwhyte.ngrok.io/repository/nuget-proxy-j4/index.json" -UserName "${{ secrets.SONATYPE_IQ_USERNAME }}" -Password "${{ secrets.SONATYPE_NXRM_PASSWORD }}"
         
-        # FIX: Pass NuGetAudit=false using the proper -Property flag
-        nuget restore ${{ env.SOLUTION }} -Source "NexusProxy" -Property NuGetAudit=false
+        # Kept clean without any extra flags to break the CLI parser
+        nuget restore ${{ env.SOLUTION }} -Source "NexusProxy"
 
     - name: List Root Directory Files
       run: dir
