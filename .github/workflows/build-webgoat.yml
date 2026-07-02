@@ -30,7 +30,7 @@ jobs:
 
     - name: Setup NuGet
       uses: NuGet/setup-nuget@v2
-
+      
     - name: Restore Solution via Nexus Proxy Only
       env:
         NuGetAudit: 'false' # Forces the audit engine off via the system environment
