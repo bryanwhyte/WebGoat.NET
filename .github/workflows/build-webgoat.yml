@@ -36,8 +36,8 @@ jobs:
         nuget sources Clear
         nuget sources Add -Name "NexusProxy" -Source "https://repo.bwhyte.ngrok.io/repository/nuget-proxy-j4/index.json" -UserName "${{ secrets.SONATYPE_IQ_USERNAME }}" -Password "${{ secrets.SONATYPE_NXRM_PASSWORD }}"
         
-        # Adding the Audit override flag here
-        nuget restore ${{ env.SOLUTION }} -Source "NexusProxy" /p:NuGetAudit=false
+        # FIX: Pass NuGetAudit=false using the proper -Property flag
+        nuget restore ${{ env.SOLUTION }} -Source "NexusProxy" -Property NuGetAudit=false
 
     - name: List Root Directory Files
       run: dir
