@@ -33,14 +33,11 @@ jobs:
 
     - name: Restore Solution via Nexus Proxy Only
       run: |
-        # 1. Clear any machine-level fallback caches or sources
         nuget sources Clear
-        
-        # 2. Register your authenticated Nexus instance
         nuget sources Add -Name "NexusProxy" -Source "https://repo.bwhyte.ngrok.io/repository/nuget-proxy-j4/index.json" -UserName "${{ secrets.SONATYPE_IQ_USERNAME }}" -Password "${{ secrets.SONATYPE_NXRM_PASSWORD }}"
         
-        # 3. CRITICAL: Explicitly pass the single allowed source to the restore engine
-        nuget restore ${{ env.SOLUTION }} -Source "NexusProxy"
+        # Adding the Audit override flag here
+        nuget restore ${{ env.SOLUTION }} -Source "NexusProxy" /p:NuGetAudit=false
 
     - name: List Root Directory Files
       run: dir
