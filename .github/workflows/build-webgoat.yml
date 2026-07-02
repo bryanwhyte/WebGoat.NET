@@ -51,7 +51,7 @@ jobs:
 
     # Perform an evaluation
     - name: Run evaluate action
-      id: evaluate
+      id: evaluate1
       uses: sonatype/actions/evaluate@v1
       with:
         iq-server-url: ${{ vars.SONATYPE_IQ_URL }}
@@ -75,6 +75,26 @@ jobs:
         mkdir "${{ env.ARTIFACT_STAGING_DIR }}"
         msbuild ${{ env.SOLUTION }} /p:Configuration="${{ env.BUILD_CONFIGURATION }}" /p:Platform="${{ env.BUILD_PLATFORM }}" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="${{ env.ARTIFACT_STAGING_DIR }}"
 
+    # Perform an evaluation
+    - name: Run evaluate action
+      id: evaluate2
+      uses: sonatype/actions/evaluate@v1
+      with:
+        iq-server-url: ${{ vars.SONATYPE_IQ_URL }}
+        username: ${{ secrets.SONATYPE_IQ_USERNAME }}
+        password: ${{ secrets.SONATYPE_IQ_PASSWORD }}
+        application-id: gha-webgoat.net
+        scan-targets: '**/*.js, **/*.dll'
+        stage : stage-release
+        sarif-file: 'result.sarif'
+        upload-sarif-file: 'true'
+        debug: false
+        # Print out the results
+    - name: Log evaluate action output
+      run: echo "${{ steps.evaluate.outputs.scan-id }} ${{ steps.evaluate.outputs.report-url }}"
+    - name: Dump evaluate outputs
+      run: echo "${{ steps.evaluate.outputs }}"
+      
     # Equivalent to: VSTest@2
     #- name: Run VS Tests (VSTest equivalent)
     #  run: |
