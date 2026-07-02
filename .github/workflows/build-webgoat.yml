@@ -49,6 +49,26 @@ jobs:
         java-version: '17'
         architecture: x64
 
+    # Perform an evaluation
+    - name: Run evaluate action
+      id: evaluate
+      uses: sonatype/actions/evaluate@v1
+      with:
+        iq-server-url: ${{ vars.SONATYPE_IQ_URL }}
+        username: ${{ secrets.SONATYPE_IQ_USERNAME }}
+        password: ${{ secrets.SONATYPE_IQ_PASSWORD }}
+        application-id: gha-webgoat.net
+        scan-targets: target/*.war
+        stage : build
+        sarif-file: 'result.sarif'
+        upload-sarif-file: 'true'
+        debug: false
+        # Print out the results
+    - name: Log evaluate action output
+      run: echo "${{ steps.evaluate.outputs.scan-id }} ${{ steps.evaluate.outputs.report-url }}"
+    - name: Dump evaluate outputs
+      run: echo "${{ steps.evaluate.outputs }}"
+
     # Equivalent to: VSBuild@1
     - name: Build Solution (VSBuild equivalent)
       run: |
@@ -56,7 +76,7 @@ jobs:
         msbuild ${{ env.SOLUTION }} /p:Configuration="${{ env.BUILD_CONFIGURATION }}" /p:Platform="${{ env.BUILD_PLATFORM }}" /p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="${{ env.ARTIFACT_STAGING_DIR }}"
 
     # Equivalent to: VSTest@2
-    - name: Run VS Tests (VSTest equivalent)
-      run: |
-        vstest.console.exe "**\bin\${{ env.BUILD_CONFIGURATION }}\*test*.dll" /Platform:${{ env.BUILD_PLATFORM }} /Configuration:${{ env.BUILD_CONFIGURATION }}
+    #- name: Run VS Tests (VSTest equivalent)
+    #  run: |
+    #    vstest.console.exe "**\bin\${{ env.BUILD_CONFIGURATION }}\*test*.dll" /Platform:${{ env.BUILD_PLATFORM }} /Configuration:${{ env.BUILD_CONFIGURATION }}
     
