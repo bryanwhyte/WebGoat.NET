@@ -52,24 +52,24 @@ jobs:
         architecture: x64
 
     # Perform an evaluation
-    - name: Run evaluate action
-      id: evaluate1
-      uses: sonatype/actions/evaluate@v1
-      with:
-        iq-server-url: ${{ vars.SONATYPE_IQ_URL }}
-        username: ${{ secrets.SONATYPE_IQ_USERNAME }}
-        password: ${{ secrets.SONATYPE_IQ_PASSWORD }}
-        application-id: gha-webgoat.net
-        scan-targets: '**/*.nupkg'
-        stage : build
-        sarif-file: 'result.sarif'
-        upload-sarif-file: 'true'
-        debug: false
-        # Print out the results
-    - name: Log evaluate action output
-      run: echo "${{ steps.evaluate.outputs.scan-id }} ${{ steps.evaluate.outputs.report-url }}"
-    - name: Dump evaluate outputs
-      run: echo "${{ steps.evaluate.outputs }}"
+    #- name: Run evaluate action
+    #  id: evaluate1
+    #  uses: sonatype/actions/evaluate@v1
+    #  with:
+    #    iq-server-url: ${{ vars.SONATYPE_IQ_URL }}
+    #    username: ${{ secrets.SONATYPE_IQ_USERNAME }}
+    #    password: ${{ secrets.SONATYPE_IQ_PASSWORD }}
+    #    application-id: gha-webgoat.net
+    #    scan-targets: '**/*.nupkg'
+    #    stage : build
+    #    sarif-file: 'result.sarif'
+    #    upload-sarif-file: 'true'
+    #    debug: false
+    #    # Print out the results
+    #- name: Log evaluate action output
+    #  run: echo "${{ steps.evaluate.outputs.scan-id }} ${{ steps.evaluate.outputs.report-url }}"
+    #- name: Dump evaluate outputs
+    #  run: echo "${{ steps.evaluate.outputs }}"
 
     # Equivalent to: VSBuild@1
     - name: Build Solution (VSBuild equivalent)
