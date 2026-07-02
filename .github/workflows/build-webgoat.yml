@@ -37,7 +37,7 @@ jobs:
         nuget sources Clear
         
         # 2. Register your authenticated Nexus instance
-        nuget sources Add -Name "NexusProxy" -Source "https://repo.bwhyte.ngrok.io/repository/nuget-proxy/index.json" -UserName "${{ secrets.SONATYPE_IQ_USERNAME }}" -Password "${{ secrets.SONATYPE_NXRM_PASSWORD }}"
+        nuget sources Add -Name "NexusProxy" -Source "https://repo.bwhyte.ngrok.io/repository/nuget-proxy-j4/index.json" -UserName "${{ secrets.SONATYPE_IQ_USERNAME }}" -Password "${{ secrets.SONATYPE_NXRM_PASSWORD }}"
         
         # 3. CRITICAL: Explicitly pass the single allowed source to the restore engine
         nuget restore ${{ env.SOLUTION }} -Source "NexusProxy"
