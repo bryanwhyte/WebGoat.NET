@@ -37,9 +37,6 @@ jobs:
       run: dir
       shell: cmd
 
-    - name: Custom NuGet Restore
-      run: nuget restore WebGoat/packages.config -PackagesDirectory packages -Verbosity Detailed
-
     - name: List packages directory
       run: dir packages
       shell: cmd
