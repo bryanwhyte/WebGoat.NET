@@ -1,0 +1,51 @@
+name: Manual WebGoat.NET Build
+
+# This configures the pipeline to be triggered manually from the Actions tab
+on:
+  workflow_dispatch:
+    inputs:
+      build_configuration:
+        description: 'Build Configuration'
+        required: true
+        default: 'Release'
+        type: choice
+        options:
+          - Release
+          - Debug
+
+jobs:
+  build:
+    name: Build WebGoat.NET
+    runs-on: windows-latest
+
+    steps:
+    # Step 1: Check out the repository code
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # Step 2: Setup MSBuild (required for legacy .NET Framework apps)
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    # Step 3: Setup NuGet to restore dependencies
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
+
+    # Step 4: Restore NuGet packages for the solution
+    - name: Restore NuGet Packages
+      run: nuget restore WebGoat.NET.sln
+
+    # Step 5: Build the solution using MSBuild
+    - name: Build Solution
+      run: |
+        msbuild WebGoat.NET.sln /p:Configuration=${{ github.event.inputs.build_configuration }} /p:Platform="Any CPU"
+
+    # Step 6: (Optional) Upload the build artifacts so you can download them
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: WebGoat-NET-Build-${{ github.event.inputs.build_configuration }}
+        path: |
+          **/bin/
+          **/obj/
+          
